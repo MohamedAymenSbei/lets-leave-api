@@ -6,7 +6,7 @@ namespace lets_leave.Services.Management;
 
 public interface IManagementService
 {
-    Task<ServerResponse<GetUserDto>> AddEmployee();
+    Task<ServerResponse<GetUserDto>> AddEmployee(AddEmployeeDto addEmployeeDto, string? depId);
     Task<ServerResponse<GetUserDto>> UpdateRole();
     Task<ServerResponse<List<GetLeaveDto>>> GetLeaveRequests();
     Task<ServerResponse<GetLeaveDto>> UpdateLeaveRequestStatus();
