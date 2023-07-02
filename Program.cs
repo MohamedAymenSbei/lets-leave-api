@@ -7,6 +7,7 @@ using lets_leave.Services.CompanyService;
 using lets_leave.Services.DeparmtentService;
 using lets_leave.Services.DepartmentService;
 using lets_leave.Services.LeaveService;
+using lets_leave.Services.Management;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +61,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<ILeaveService, LeaveService>();
+builder.Services.AddScoped<IManagementService, ManagementService>();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor(); // Ables us to read headers from a request
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

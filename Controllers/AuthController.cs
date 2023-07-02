@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using lets_leave.Dto.AuthDto;
 using lets_leave.Dto.CompanyDto;
+using lets_leave.Dto.UserDto;
 using lets_leave.Enums;
 using lets_leave.Models;
 using lets_leave.Services.AuthService;
@@ -41,6 +42,19 @@ public class AuthController : ControllerBase
         {
             true => Ok(response),
             false when response.Message.Contains("User does not exists") => NotFound(response),
+            false => BadRequest(response)
+        };
+    }
+    
+    [Authorize]
+    [HttpGet("UserInfo")]
+    public async Task<ActionResult<ServerResponse<GetUserDto>>> GetUserInfo()
+    {
+        var response = await _authService.GetUserInfo();
+        return response.Success switch
+        {
+            true => Ok(response),
+            false when response.Message.Contains("not found") => NotFound(response),
             false => BadRequest(response)
         };
     }

@@ -1,9 +1,12 @@
 using AutoMapper;
 using lets_leave.Dto.AuthDto;
+using lets_leave.Dto.LeaveDto;
+using lets_leave.Dto.UserDto;
 using lets_leave.Enums;
 using lets_leave.Models;
 using lets_leave.Services.CompanyService;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace lets_leave.Services.AuthService;
 
@@ -48,7 +51,7 @@ public class AuthService : IAuthService
 
             //Generate token
             var token = await _tokenService.CreateToken(user);
-                
+
             response.Data = new Auth
             {
                 Role = Roles.CompanyOwner,
@@ -98,6 +101,28 @@ public class AuthService : IAuthService
             Token = token
         };
 
+
+        return response;
+    }
+
+    public async Task<ServerResponse<GetUserDto>> GetUserInfo()
+    {
+        var response = new ServerResponse<GetUserDto>();
+
+        var userId = _tokenService.GetUserId();
+        if (userId == null)
+        {
+            response.Success = false;
+            response.Message = "User not found";
+        }
+        else
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var roles = await _userManager.GetRolesAsync(user);
+            var userDto = _mapper.Map<GetUserDto>(user);
+            userDto.Role = roles.First();
+            response.Data = userDto;
+        }
 
         return response;
     }

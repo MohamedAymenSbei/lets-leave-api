@@ -14,6 +14,7 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         CreateMap<PostUserDto, User>();
+        CreateMap<User, GetUserDto>();
 
         CreateMap<PostCompanyDto, Company>();
         CreateMap<Company, GetCompanyDto>();
