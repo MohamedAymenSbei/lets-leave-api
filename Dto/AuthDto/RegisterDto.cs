@@ -8,6 +8,7 @@ public class RegisterDto
 {
     [Required(ErrorMessage = "User information are required")]
     public PostUserDto UserInformation { get; set; }
+
     [Required(ErrorMessage = "Company information are required")]
     public PostCompanyDto CompanyInformation { get; set; }
 }
