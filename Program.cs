@@ -107,7 +107,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
+const string MyAppOrigin = "_MyAppOrigin";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAppOrigin,
+        policy  =>
+        {
+            policy.WithOrigins("http://localhost:3000");
+        });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -117,6 +125,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(MyAppOrigin);
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
