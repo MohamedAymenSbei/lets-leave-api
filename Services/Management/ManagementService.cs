@@ -171,19 +171,27 @@ public class ManagementService : IManagementService
 
         var leaveRequests = await _dbContext.LeaveRequests
             .Include(lr => lr.User)
-            .ThenInclude(u => u.Department)
             .ThenInclude(u => u.Company)
+            .ThenInclude(u => u.Departments)
             .Where(lr => lr.User.Company.Id == companyResponse.Data.Id)
             .Where(lr => lr.User.Id != userId)
             .ToListAsync();
 
-        response.Data = leaveRequests.Select(lr =>
-        {
-            var request = _mapper.Map<UserLeaveRequestDto>(lr);
-            request.User.Department = _mapper.Map<GetDepartmentDto>(lr.User.Department);
-            return request;
-        }).ToList();
+        var requestsDto = new List<UserLeaveRequestDto>();
 
+        foreach (var request in leaveRequests)
+        {
+            var userDto = _mapper.Map<GetUserDto>(request.User);
+            userDto.Department = _mapper.Map<GetDepartmentDto>(request.User.Department);
+            var roles = await _userManager.GetRolesAsync(request.User);
+            userDto.Role = roles.First();
+
+            var requestDto = _mapper.Map<UserLeaveRequestDto>(request);
+            requestDto.User = userDto;
+            requestsDto.Add(requestDto);
+        }
+
+        response.Data = requestsDto;
         return response;
     }
 
@@ -252,7 +260,6 @@ public class ManagementService : IManagementService
             userDto.Role = roles.First();
             employeesDto.Add(userDto);
         }
-
 
         response.Data = employeesDto.ToList();
         return response;
