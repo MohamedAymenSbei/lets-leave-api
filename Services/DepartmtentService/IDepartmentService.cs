@@ -9,4 +9,5 @@ public interface IDepartmentService
     Task<ServerResponse<GetDepartmentDto>> Create(PostDepartmentDto departmentDto);
     Task<ServerResponse<GetDepartmentDto>> Update(string id, PostDepartmentDto departmentDto);
     Task<ServerResponse<string>> Delete(string id);
+    Task<ServerResponse<Department>> AddDepartmentToUser(User user, string depId);
 }

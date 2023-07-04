@@ -24,5 +24,6 @@ public class AutoMapperProfile : Profile
 
         CreateMap<PostLeaveDto, LeaveRequest>();
         CreateMap<LeaveRequest, GetLeaveDto>();
+        CreateMap<LeaveRequest, UserLeaveRequestDto>();
     }
 }

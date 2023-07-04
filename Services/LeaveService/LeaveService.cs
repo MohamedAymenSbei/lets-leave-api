@@ -80,19 +80,20 @@ public class LeaveService : ILeaveService
         {
             response.Success = false;
             response.Message = "Leave request not found";
+            return response;
         }
-        else if (leaveRequestDb.Status == LeaveStatus.UnderReview)
+
+        if (leaveRequestDb.Status != LeaveStatus.Pending)
         {
             response.Success = false;
-            response.Message = "Cannot modify under review requests.";
+            response.Message = "Cannot modify this leave request";
+            return response;
         }
-        else
-        {
-            leaveRequestDb.UpdatedAt = DateTime.Now;
-            _mapper.Map(postLeaveDto, leaveRequestDb);
-            _dbContext.LeaveRequests.Update(leaveRequestDb);
-            await _dbContext.SaveChangesAsync();
-        }
+
+        leaveRequestDb.UpdatedAt = DateTime.Now;
+        _mapper.Map(postLeaveDto, leaveRequestDb);
+        _dbContext.LeaveRequests.Update(leaveRequestDb);
+        await _dbContext.SaveChangesAsync();
 
         response.Data = _mapper.Map<GetLeaveDto>(leaveRequestDb);
         return response;
@@ -115,18 +116,19 @@ public class LeaveService : ILeaveService
         {
             response.Success = false;
             response.Message = "Leave request not found";
+            return response;
         }
-        else if (leaveRequestDb.Status == LeaveStatus.UnderReview)
+
+        if (leaveRequestDb.Status != LeaveStatus.Pending)
         {
             response.Success = false;
-            response.Message = "Cannot remove under review requests.";
+            response.Message = "Cannot remove this leave request.";
+            return response;
         }
-        else
-        {
-            _dbContext.LeaveRequests.Remove(leaveRequestDb);
-            await _dbContext.SaveChangesAsync();
-            response.Data = leaveRequestDb.Id.ToString();
-        }
+
+        _dbContext.LeaveRequests.Remove(leaveRequestDb);
+        await _dbContext.SaveChangesAsync();
+        response.Data = leaveRequestDb.Id.ToString();
 
         return response;
     }

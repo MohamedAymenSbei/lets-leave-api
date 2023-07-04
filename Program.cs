@@ -17,20 +17,20 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add connection to DB
-builder.Services.AddDbContext<AppDbContext>(option=>
+builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ASP Identity config
 builder.Services.AddIdentityCore<User>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = false;
-    options.User.RequireUniqueEmail = true;
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 8;
-})
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 8;
+    })
     .AddRoles<IdentityRole>()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<AppDbContext>();
@@ -38,11 +38,11 @@ builder.Services.AddIdentityCore<User>(options =>
 builder.Services.AddDataProtection();
 
 builder.Services.AddAuthentication(option =>
-{
-    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-    .AddJwtBearer(options=>
+    {
+        option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
@@ -54,7 +54,7 @@ builder.Services.AddAuthentication(option =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
             ClockSkew = TimeSpan.Zero
         }
-        );
+    );
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -81,7 +81,7 @@ builder.Services.AddSwaggerGen(c =>
             Name = "Mohamed Aymen Sbei",
         }
     });
-    c.ResolveConflictingActions(desc=>desc.First());
+    c.ResolveConflictingActions(desc => desc.First());
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
         Name = "Authorization",
@@ -89,7 +89,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the bearer scheme." 
+        Description = "JWT Authorization header using the bearer scheme."
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
     {

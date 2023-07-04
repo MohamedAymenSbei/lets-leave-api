@@ -9,6 +9,6 @@ public interface ICompanyService
 {
     Task<ServerResponse<Company>> CreateCompany(PostCompanyDto companyDto);
     Task<bool> IsCompanyExists(string email, string name);
-    Task<ServerResponse<T>> GetCompany<T>();
+    Task<ServerResponse<T>> GetCompany<T>(bool includeUsers = false, bool includeDepartments = false);
     Task<ServerResponse<string>> Delete();
 }

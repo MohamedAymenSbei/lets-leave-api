@@ -4,6 +4,7 @@ using lets_leave.Dto.DepartmentDto;
 using lets_leave.Models;
 using lets_leave.Services.CompanyService;
 using lets_leave.Services.DeparmtentService;
+using Microsoft.EntityFrameworkCore;
 
 namespace lets_leave.Services.DepartmentService;
 
@@ -24,11 +25,11 @@ public class DepartmentService : IDepartmentService
         _mapper = mapper;
     }
 
-    public async  Task<ServerResponse<List<GetDepartmentDto>>> GetAll()
+    public async Task<ServerResponse<List<GetDepartmentDto>>> GetAll()
     {
         var response = new ServerResponse<List<GetDepartmentDto>>();
 
-        var companyResponse = await _companyService.GetCompany<Company>();
+        var companyResponse = await _companyService.GetCompany<Company>(includeDepartments: true);
         var company = companyResponse.Data;
 
         if (company == null)
@@ -95,6 +96,7 @@ public class DepartmentService : IDepartmentService
             response.Success = false;
             return response;
         }
+
         var departmentExists = company.Departments.FirstOrDefault(d =>
             string.Equals(d.Name, departmentDto.Name, StringComparison.CurrentCultureIgnoreCase)) != null;
 
@@ -137,6 +139,25 @@ public class DepartmentService : IDepartmentService
         _appDbContext.Departments.Remove(department);
         await _appDbContext.SaveChangesAsync();
         response.Data = department.Id.ToString();
+        return response;
+    }
+
+    public async Task<ServerResponse<Department>> AddDepartmentToUser(User user, string depId)
+    {
+        var response = new ServerResponse<Department>();
+
+        var department = await _appDbContext.Departments
+            .FirstOrDefaultAsync(d => d.Id.ToString() == depId);
+        if (department == null)
+        {
+            response.Success = false;
+            response.Message = "Department not found";
+            return response;
+        }
+
+        department.Users.Add(user);
+        response.Data = department;
+
         return response;
     }
 }

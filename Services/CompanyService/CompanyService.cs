@@ -51,7 +51,7 @@ public class CompanyService : ICompanyService
         return existingCompany != null;
     }
 
-    public async Task<ServerResponse<T>> GetCompany<T>()
+    public async Task<ServerResponse<T>> GetCompany<T>(bool includeUsers = false, bool includeDepartments = false)
     {
         var response = new ServerResponse<T>();
 
@@ -61,13 +61,21 @@ public class CompanyService : ICompanyService
         {
             response.Success = false;
             response.Message = "Invalid user";
-            ;
             return response;
         }
 
-        var company = await _dbContext.Companies
-            .Include(c => c.Departments)
-            .FirstOrDefaultAsync(c => c.Users.Any(u => u.Id == userId));
+        var query = _dbContext.Companies.AsSingleQuery();
+
+        if (includeUsers)
+        {
+            query = query.Include(c => c.Users);
+        }
+
+        if (includeDepartments)
+        {
+            query = query.Include(c => c.Departments);
+        }
+        var company = await query.FirstOrDefaultAsync(c=>c.Users.Any(u=>u.Id == userId));
         if (company == null)
         {
             response.Success = false;
