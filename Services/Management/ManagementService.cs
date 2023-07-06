@@ -210,7 +210,8 @@ public class ManagementService : IManagementService
         var request = await _dbContext.LeaveRequests
             .Include(lr => lr.User)
             .ThenInclude(u => u.Company)
-            .FirstOrDefaultAsync(lr => lr.User.Company.Id == companyResponse.Data.Id);
+            .Where(lr => lr.User.Company.Id == companyResponse.Data.Id)
+            .FirstOrDefaultAsync(lr=>lr.Id.ToString() == requestId);
         if (request == null)
         {
             response.Success = false;
@@ -219,6 +220,8 @@ public class ManagementService : IManagementService
         }
 
         request.Status = status;
+        request.UpdatedAt = DateTime.Now;
+        _dbContext.Update(request);
         await _dbContext.SaveChangesAsync();
         response.Data = _mapper.Map<GetLeaveDto>(request);
         return response;
