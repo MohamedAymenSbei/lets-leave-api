@@ -118,7 +118,7 @@ public class DepartmentService : IDepartmentService
     {
         var response = new ServerResponse<string>();
 
-        var companyResponse = await _companyService.GetCompany<Company>();
+        var companyResponse = await _companyService.GetCompany<Company>(includeDepartments:true);
         var company = companyResponse.Data;
 
         if (company == null)
